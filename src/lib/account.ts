@@ -54,7 +54,7 @@ export class Account {
 
             let updatedResponse = await this.getUpdatedEmails({deltaToken: storedDeltaToken})
 
-            console.log("Updated response: ", updatedResponse)
+            // console.log("Updated response: ", updatedResponse)
 
             if (updatedResponse && updatedResponse.nextDeltaToken) {
                 // then the sync has completed
