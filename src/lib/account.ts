@@ -39,7 +39,7 @@ export class Account {
     async performInitialSync() {
         try {
             // start the sync process
-            const daysWithin = 3
+            const daysWithin = 20
             let syncResponse = await this.startSync(daysWithin)
             // keep rechecking until it is ready
             while (!syncResponse.ready) {

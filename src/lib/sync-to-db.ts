@@ -23,9 +23,9 @@ async function upsertEmail(email: EmailMessage, accountId: string, index: number
     console.log("Upserting email", index)
     try {
         let emailLabelType: 'inbox' | 'sent' | 'draft' = 'inbox'
-        if (email.sysLabels.includes("inbox") || email.sysLabels.includes("important")) {
+        if (email.sysLabels.includes("inbox")) {
             emailLabelType = 'inbox'
-        } else if (email.sysLabels.includes('sent')) {
+        } else if (email.sysLabels.includes("sent")) {
             emailLabelType = 'sent'
         } else if (email.sysLabels.includes("draft")) {
             emailLabelType = "draft"
