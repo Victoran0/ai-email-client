@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import AccountSwitcher from './account-switcher'
 import SideBar from './sidebar'
+import ThreadList from './thread-list'
+import ThreadDisplay from './thread-display'
 
 type Props = {
     defaultLayout: number[] | undefined
@@ -21,7 +23,7 @@ const Mail = ({defaultLayout=[20,32,48], navCollapsedSize, defaultCollapsed}: Pr
     return (
         <TooltipProvider delayDuration={0}>
             <ResizablePanelGroup direction='horizontal' onLayout={(sizes: number[]) => {
-                console.log(sizes)
+                // console.log(sizes)
             }} className='items-stretch h-full min-h-screen' >
                 <ResizablePanel defaultSize={defaultLayout[0]} 
                 collapsedSize={navCollapsedSize}
@@ -67,8 +69,12 @@ const Mail = ({defaultLayout=[20,32,48], navCollapsedSize, defaultCollapsed}: Pr
                         </div>
                         <Separator/>
                         {/* Search bar */}
-                        <TabsContent value='inbox'>inbox</TabsContent>
-                        <TabsContent value='done'>done</TabsContent>
+                        <TabsContent value='inbox'>
+                            <ThreadList />
+                        </TabsContent>
+                        <TabsContent value='done'>
+                            <ThreadList />
+                        </TabsContent>
                     </Tabs>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
@@ -76,7 +82,7 @@ const Mail = ({defaultLayout=[20,32,48], navCollapsedSize, defaultCollapsed}: Pr
                     defaultSize={defaultLayout[0]}
                     minSize={30}
                 >
-                    thread display
+                    <ThreadDisplay />
                 </ResizablePanel>
             </ResizablePanelGroup>
         </TooltipProvider>

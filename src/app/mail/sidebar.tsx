@@ -15,29 +15,31 @@ const SideBar = ({isCollapsed}: Props) => {
     const {data: sentThreads} = api.account.getNumThreads.useQuery({accountId, tab: 'sent'})
 
     return (
-        <Nav 
-            isCollapsed={isCollapsed}
-            links = {[
-                {
-                    title: 'Inbox',
-                    label: inboxThreads?.toString() ?? '0',
-                    icon: Inbox,
-                    variant: tab === 'inbox' ? 'default' : "ghost"
-                },
-                {
-                    title: 'Draft',
-                    label: draftThreads?.toString() ?? '0',
-                    icon: File,
-                    variant: tab === 'draft' ? 'default' : "ghost"
-                },
-                {
-                    title: 'Sent',
-                    label: sentThreads?.toString() ?? '0',
-                    icon: Send,
-                    variant: tab === 'sent' ? 'default' : "ghost"
-                }
-            ]}
-        />
+        <>
+            <Nav
+                isCollapsed={isCollapsed}
+                links={[
+                    {
+                        title: "Inbox",
+                        label: inboxThreads?.toString() || "0",
+                        icon: Inbox,
+                        variant: tab === "inbox" ? "default" : "ghost",
+                    },
+                    {
+                        title: "Draft",
+                        label: draftThreads?.toString() || "0",
+                        icon: File,
+                        variant: tab === "draft" ? "default" : "ghost",
+                    },
+                    {
+                        title: "Sent",
+                        label: sentThreads?.toString() || "0",
+                        icon: Send,
+                        variant: tab === "sent" ? "default" : "ghost",
+                    },
+                ]}
+            />
+        </>
     )
 }
 
