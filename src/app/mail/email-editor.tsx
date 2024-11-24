@@ -1,13 +1,16 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {EditorContent, useEditor} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit';
-import {Text} from "@tiptap/extension-text";
+import Text from "@tiptap/extension-text";
 import EditorMenubar from './editor-menubar';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import TagInput from './tag-input';
 import { Input } from '@/components/ui/input';
+import AIComposeButton from './ai-compose';
+import { generate } from './action';
+import { readStreamableValue } from 'ai/rsc';
 
 type Props = {
     subject: string
@@ -25,12 +28,25 @@ type Props = {
 const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setCcValues, to, handleSend, isSending, defaultToolbarExpanded}: Props) => {
     const [value, setValue] = React.useState<string>('')
     const [expanded, setExpanded] = React.useState(defaultToolbarExpanded)
+    const [token, setToken] = useState<string>('')
+
+    const aiGenerate = async (value: string) => {
+        const {output} = await generate(value)
+        for await (const delta of readStreamableValue(output)) {
+            console.log("the output value", delta)
+            if (delta) {
+                setToken(delta)
+            } else {
+                console.log('------------no token')
+            }
+        }
+    }
 
     const CustomText = Text.extend({
         addKeyboardShortcuts() {
             return {
-                'Meta-q': () => {
-                    console.log('meta-q')
+                'Mod-q': () => {
+                    aiGenerate(this.editor.getText())
                     return true
                 }
             }
@@ -44,6 +60,14 @@ const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setC
             setValue(editor.getHTML())
         }
     })
+
+    useEffect(() => {
+        editor?.commands?.insertContent(token)
+    }, [editor, token])
+
+    const onGenerate = (token: string) => {
+        editor?.commands?.insertContent(token)
+    }
 
     if (!editor) return null
 
@@ -87,6 +111,10 @@ const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setC
                             To {to.join(', ')}
                         </span>
                     </div>
+                    <AIComposeButton 
+                        isComposing={defaultToolbarExpanded}
+                        onGenerate={onGenerate}
+                    />
                 </div>
             </div>
             <div className="prose w-full px-4">
@@ -97,7 +125,7 @@ const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setC
                 <span className="text-sm">
                     Tip: Press {" "}
                     <kbd className='px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg'>
-                        Cmd + Q
+                        Ctrl + Q
                     </kbd> {" "}
                     For AI autocomplete
                 </span>

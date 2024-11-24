@@ -15,6 +15,7 @@ type Props = {
 const TagInput = ({ placeholder, label, onChange, value}: Props) => {
     const {accountId} = useThreads()
     const {data: suggestions} = api.account.getSuggestions.useQuery({accountId})
+
     const options = suggestions?.map(suggestion => ({
         label: <span className='flex items-center gap-2'>
             <Avatar name={suggestion.address} size='25' textSizeRatio={2} round={true} />
@@ -22,6 +23,7 @@ const TagInput = ({ placeholder, label, onChange, value}: Props) => {
         </span>,
         value: suggestion.address
     }))
+    
     const [inputValue, setInputValue] = useState<string>('')
 
   return (

@@ -36,6 +36,10 @@ const Component = ({replyDetails}: {replyDetails: RouterOutputs['account']['getR
 
     }, [threadId, replyDetails])
 
+    const handleSend = async (value: string) => {
+        console.log(value)
+    }
+
     return (
         <div>
             <EmailEditor 
@@ -50,8 +54,8 @@ const Component = ({replyDetails}: {replyDetails: RouterOutputs['account']['getR
 
                 to={replyDetails.to.map(to => to.address)}
 
-                // handleSend={handleSend}
-                // isSending={isSending}
+                handleSend={handleSend}
+                isSending={false}
             />
         </div>
     )
