@@ -11,6 +11,7 @@ import {
 
 import { ThemeProvider } from "@/components/theme-provider";
 import KBar from "@/components/kbar";
+import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({
             <TRPCReactProvider>
               <KBar>
                 {children}
+                <Toaster />
               </KBar>
             </TRPCReactProvider>
           </ThemeProvider>
