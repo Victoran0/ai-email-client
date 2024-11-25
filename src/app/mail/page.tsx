@@ -3,15 +3,14 @@ import ThemeToggle from '@/components/theme-toogle'
 import { UserButton } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
 import React from 'react'
-import ComposeButton from './compose-button'
-// import Mail from './mail'
-// importing mail dynamically
 
+// Dynamic imports
+const ComposeButton = dynamic(() => {
+    return import('./compose-button')
+}, {ssr: false})
 const Mail = dynamic(() => {
     return import("./mail")
-}, {
-    ssr: false
-})
+}, { ssr: false })
 
 
 const MailDashboard = () => {

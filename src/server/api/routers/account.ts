@@ -59,6 +59,8 @@ export const accountRouter = createTRPCRouter({
         done: z.boolean()
     })).query(async ({ctx, input}) => {
         const account = await authoriseAccountAccess(input.accountId, ctx.auth.userId)
+        const acc = new Account(account.accessToken)
+        acc.syncEmails(input.accountId).catch(console.error)
 
         let filter: Prisma.ThreadWhereInput = {}
 

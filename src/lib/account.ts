@@ -1,6 +1,8 @@
 import axios from "axios";
 import { SyncResponse, SyncUpdatedResponse, EmailMessage, EmailAddress } from "./types";
 import { threadId } from "worker_threads";
+import { db } from "@/server/db";
+import { syncEmailsToDatabase } from "./sync-to-db";
 
 export class Account {
     private token: string;
@@ -90,6 +92,49 @@ export class Account {
             } else {
                 console.error("Error during sync: ", error)
             }
+        }
+    }
+
+    async syncEmails(accountId: string) {
+        const account = await db.account.findUnique({
+            where: {
+                accessToken: this.token,
+                id: accountId
+            } 
+        })
+        if (!account) throw new Error("Account not found")
+        if (!account.nextDeltaToken) throw new Error("Account not ready for sync")
+        let response = await this.getUpdatedEmails({
+        deltaToken: account.nextDeltaToken})
+        let storedDeltaToken = account.nextDeltaToken
+        let allEmails: EmailMessage[] = response.records
+
+        if (response.nextDeltaToken) {
+            storedDeltaToken = response.nextDeltaToken
+        }
+
+        while (response.nextPageToken) {
+            response = await this.getUpdatedEmails({pageToken: response.nextPageToken})
+            allEmails = allEmails.concat(response.records)
+            if (response.nextDeltaToken) {
+                storedDeltaToken = response.nextDeltaToken
+            }
+        }
+
+        try {
+            syncEmailsToDatabase(allEmails, account.id) 
+        } catch (error) {
+            console.error("Error during sync: ", error)
+        }
+
+        await db.account.update({
+            where: {id: account.id},
+            data: {nextDeltaToken: storedDeltaToken}
+        })
+
+        return {
+            emails: allEmails,
+            deltaToken: storedDeltaToken
         }
     }
 
