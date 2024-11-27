@@ -1,10 +1,13 @@
 'use client'
-import ThemeToggle from '@/components/theme-toogle'
+// import ThemeToggle from '@/components/theme-toogle'
 import { UserButton } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
 import React from 'react'
 
 // Dynamic imports
+const ThemeToggle = dynamic(() => {
+    return import('@/components/theme-toogle')
+}, {ssr: false})
 const ComposeButton = dynamic(() => {
     return import('./compose-button')
 }, {ssr: false})

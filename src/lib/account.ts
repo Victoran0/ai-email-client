@@ -25,7 +25,8 @@ export class Account {
     }
 
     async getUpdatedEmails({deltaToken, pageToken}: {deltaToken?: string, pageToken?: string}) {
-        console.log('getUpdatedEmails', { deltaToken, pageToken });
+        // console.log('getUpdatedEmails', { deltaToken, pageToken });
+        console.log("updated emails");
         let params: Record<string, string> = {}
         if (deltaToken) params.deltaToken = deltaToken
         if (pageToken) params.pageToken = pageToken

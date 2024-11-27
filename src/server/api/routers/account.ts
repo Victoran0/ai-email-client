@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import { Prisma } from "@prisma/client";
 import { emailAddressSchema } from "@/lib/types";
 import { Account } from "@/lib/account";
+import { OramaClient } from "@/lib/orama";
 
 // to check if the user is authorised any not trying to access information from any other account
 export const authoriseAccountAccess = async (accountId: string, userId: string) => {
@@ -182,5 +183,18 @@ export const accountRouter = createTRPCRouter({
             bcc: input.bcc,
             replyTo: input.replyTo,
         })
+    }),
+    searchEmails: privateProcedure.input(z.object({
+        accountId: z.string(),
+        query: z.string()
+    })).mutation(async ({ctx, input}) => {
+        const account = await authoriseAccountAccess(input.accountId, ctx.auth.userId)
+        // console.log("The user's account: ", account)
+        const orama = new OramaClient(account.id)
+        await orama.initialize()
+        const {query} = input
+        const results = await orama.search({term: query})
+        console.log("the orama search results: ", results)
+        return results
     })
 })

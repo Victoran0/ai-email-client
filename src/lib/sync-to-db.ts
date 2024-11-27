@@ -2,15 +2,35 @@ import { EmailMessage, EmailAddress, EmailAttachment } from "./types";
 import pLimit from 'p-limit'
 import { db } from "@/server/db";
 import { Prisma } from "@prisma/client";
+import { OramaClient } from "./orama";
+import { turndown } from "./turndown";
+import { getEmbeddings } from "./embedding";
 
 
 export async function syncEmailsToDatabase(emails: EmailMessage[], accountId: string) {
     // console.log("attempting to sync emails to database", emails)
     const limit = pLimit(5)
 
+    const orama = new OramaClient(accountId)
+    await orama.initialize()
+
     try {
         // Promise.all(emails.map((email, index) => upsertEmail(email, accountId, index)))
         for (const email of emails) {
+            const body = turndown.turndown(email.body ?? email.bodySnippet ?? "")
+            const embeddings = await getEmbeddings(body)
+            console.log(embeddings.length)
+
+            await orama.insert({
+                subject: email.subject,
+                body: body,
+                rawBody: email.bodySnippet ?? "",
+                from: email.from.address,
+                to: email.to.map(to => to.address),
+                sentAt: email.sentAt.toLocaleString(),
+                threadId: email.threadId,
+                embeddings
+            })
             await upsertEmail(email, accountId, 0)
         }
     } catch (error) {

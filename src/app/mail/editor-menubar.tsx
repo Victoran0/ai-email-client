@@ -1,4 +1,4 @@
-// "use client"
+"use client"
 import React from 'react'
 import { type Editor } from '@tiptap/react'
 import { Bold, Code, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Italic, List, ListOrdered, Quote, Redo, Strikethrough, Undo } from 'lucide-react'

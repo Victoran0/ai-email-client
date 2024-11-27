@@ -1,3 +1,4 @@
+"use client"
 import { api } from '@/trpc/react'
 import { useRegisterActions } from 'kbar'
 import React from 'react'

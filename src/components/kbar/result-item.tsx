@@ -1,4 +1,4 @@
-// ResultItem.tsx
+"use client"
 import { motion } from 'framer-motion'
 import * as React from "react";
 import type { ActionImpl, ActionId } from "kbar";

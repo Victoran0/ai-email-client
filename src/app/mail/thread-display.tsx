@@ -17,10 +17,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
 import EmailDisplay from './email-display'
 import ReplyBox from './reply-box'
+import { useAtom } from 'jotai'
+import { isSearchingAtom } from './search-bar'
+import SearchDisplay from './search-display'
 
 const ThreadDisplay = () => {
     const {threadId, threads} = useThreads()
     const thread = threads?.find(T => T.id===threadId)
+    const [isSearching] = useAtom(isSearchingAtom)
+
     return (
         <div className="flex flex-col h-full">
             {/* Buttons Row */}
@@ -58,7 +63,10 @@ const ThreadDisplay = () => {
                 </div>
             </div>
             <Separator />
-            {thread ? <>
+            {isSearching ? <SearchDisplay /> : (
+            <>
+            {thread ? 
+            <>
             <div className="flex flex-col flex-1 overflow-scroll">
                 <div className="flex items-center p-4">
                     <div className="flex items-center gap-4 text-sm">
@@ -98,11 +106,14 @@ const ThreadDisplay = () => {
                 {/* Reply Box */}
                 <ReplyBox />
             </div>
-            </> : <>
+            </> : 
+            <>
                 <div className='p-8 text-center text-muted-foreground'>
                     No message selected
                 </div>
-            </>}
+            </> }
+            </>
+            )}
         </div>
     )
 }

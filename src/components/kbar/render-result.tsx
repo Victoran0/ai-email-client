@@ -1,3 +1,4 @@
+"use client"
 import { KBarResults, useMatches } from 'kbar'
 import React from 'react'
 import ResultItem from './result-item'
