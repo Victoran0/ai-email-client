@@ -6,6 +6,9 @@ import { google } from '@ai-sdk/google';
 import {createStreamableValue} from 'ai/rsc'
 import { auth } from "@clerk/nextjs/server";
 import { OramaClient } from "@/lib/orama";
+import { getSubscriptionStatus } from "@/lib/stripe-action";
+import { db } from "@/server/db";
+import { FREE_CREDITS_PER_DAY } from "@/constants";
 
 export async function POST(req: Request) {
     try {
@@ -13,6 +16,26 @@ export async function POST(req: Request) {
         if (!userId) {
             return new Response("Unauthorized", {status: 401})
         }
+
+        const today = new Date().toDateString()
+        const isSubscribed = await getSubscriptionStatus()
+
+        if (!isSubscribed) {
+            const chatbotInteraction = await db.chatbotInteraction.findUnique({where:{userId: userId, day: today}})
+            
+            if (!chatbotInteraction) {
+                await db.chatbotInteraction.create({
+                    data: {
+                        day: today,
+                        userId: userId,
+                        count: 1
+                    }
+                })
+            } else if (chatbotInteraction.count >= FREE_CREDITS_PER_DAY) {
+                return new Response("You have reached the free limit for today", {status: 429})
+            }
+            } 
+
         const {accountId, messages} = await req.json()
         const orama = new OramaClient(accountId)
         await orama.initialize()
@@ -37,6 +60,7 @@ export async function POST(req: Request) {
             When responding, please keep in mind:
             - Be helpful, clever, and articulate.
             - Rely on the provided email CONTEXT BLOCK to inform your responses.
+            - The CONTEXT BLOCK is the result of a vector search using a Retrieval Augmented Generation of USER PROMPT, based on all data in the user's inbox. So the CONTEXT BLOCK being empty does not mean their inbox is empty, it only mean the USER PROMPT is not associated with anything in the email.
             - If the CONTEXT BLOCK is empty: If the USER PROMPT is a greeting you can kindly greet them back, if it is a question regarding their email, let them know there is no such information in their mailbox.
             - If the CONTEXT BLOCK is not empty but it does not contain enough information to answer a question, politely say you don't have enough information.
             - Avoid apologizing for previous responses. Instead, indicate that you have updated your knowledge based on new information.
@@ -49,6 +73,17 @@ export async function POST(req: Request) {
             prompt: prompt
         })
         console.log(result.toDataStreamResponse())
+        await db.chatbotInteraction.update({
+            where: {
+                day: today,
+                userId: userId
+            },
+            data: {
+                count: {
+                    increment: 1
+                }
+            }
+        })
         return result.toDataStreamResponse()
         // return new Response("OK", {status: 200})
     } catch (error) {

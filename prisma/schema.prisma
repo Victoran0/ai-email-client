@@ -20,12 +20,14 @@ datasource db {
 // }
 
 model User {
-    id           String    @id @default(cuid())
-    emailAddress String    @unique
-    firstName    String
-    lastName     String
-    imageUrl     String?
-    Account      Account[]
+    id                 String              @id @default(cuid())
+    emailAddress       String              @unique
+    firstName          String
+    lastName           String
+    imageUrl           String?
+    Account            Account[]
+    stripeSubscription StripeSubscription?
+    ChatbotInteraction ChatbotInteraction?
 }
 
 model Account {
@@ -39,6 +41,32 @@ model Account {
     user           User           @relation(fields: [userId], references: [id])
     threads        Thread[]
     emailAddresses EmailAddress[]
+}
+
+model StripeSubscription {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    userId    String   @unique
+    user      User     @relation(fields: [userId], references: [id])
+
+    customerId       String
+    subscriptionId   String   @unique
+    priceId          String
+    currentPeriodEnd DateTime
+    updatedAt        DateTime @updatedAt
+}
+
+model ChatbotInteraction {
+    id String @id @default(cuid())
+
+    day   String
+    count Int    @default(1)
+
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@unique([day, userId])
+    @@index([day, userId])
 }
 
 model Thread {

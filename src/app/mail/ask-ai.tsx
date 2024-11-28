@@ -5,23 +5,33 @@ import { cn } from '@/lib/utils'
 import { Send, SparkleIcon } from 'lucide-react'
 import {useChat} from 'ai/react'
 import useThreads from '@/hooks/use-threads'
+import PremiumBanner from './premium-banner'
+import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 const AskAI = ({isCollapsed}: {isCollapsed: boolean}) => {
     if (isCollapsed) return null
     const {accountId} = useThreads()
+    const utils = api.useUtils()
     const {input, handleInputChange, handleSubmit, messages} = useChat({
         api: '/api/chat',
         body: {
             accountId
         },
         onError: error => {
+            toast.error(error.message)
             console.log("useChat error: ", error)
+        },
+        onFinish: () => {
+            utils.account.getChatbotInteraction.refetch()
         },
         initialMessages: []
     })
     // const messages: any[] = []
   return (
     <div className='p-4 mb-14'>
+        <PremiumBanner />
+        <div className="h-4"></div>
         <motion.div className='flex flex-1 flex-col items-end p-4 pb-4 rounded-lg bg-gray-100 shadow-inner dark:bg-gray-900'>
         <div className="max-h-[50vh] overflow-y-scroll w-full flex flex-col gap-2" id='message-container'>
             <AnimatePresence mode='wait'>

@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { emailAddressSchema } from "@/lib/types";
 import { Account } from "@/lib/account";
 import { OramaClient } from "@/lib/orama";
+import { FREE_CREDITS_PER_DAY } from "@/constants";
 
 // to check if the user is authorised any not trying to access information from any other account
 export const authoriseAccountAccess = async (accountId: string, userId: string) => {
@@ -196,5 +197,18 @@ export const accountRouter = createTRPCRouter({
         const results = await orama.search({term: query})
         console.log("the orama search results: ", results)
         return results
+    }),
+    getChatbotInteraction: privateProcedure.input(z.object({accountId: z.string()})
+    ).query(async({ctx, input}) => {
+        const account = await authoriseAccountAccess(input.accountId, ctx.auth.userId)
+        const today = new Date().toDateString()
+        const chatbotInteraction = await db.chatbotInteraction.findUnique({
+            where: {
+                userId: ctx.auth.userId,
+                day: today
+            }
+        })
+        const remainingCredit = FREE_CREDITS_PER_DAY - (chatbotInteraction?.count || 0)
+        return {remainingCredit}
     })
 })

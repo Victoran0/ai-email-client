@@ -6,6 +6,7 @@ import {useLocalStorage} from 'usehooks-ts'
 import { cn } from '@/lib/utils'
 import { PlusIcon } from 'lucide-react'
 import { getAurinkoAuthUrl } from '@/lib/aurinko'
+import { toast } from 'sonner'
 
 type Props = {
     isCollapsed: boolean 
@@ -44,8 +45,12 @@ const AccountSwitcher = ({isCollapsed}: Props) => {
                     )
                 })}
                 <div onClick={async() => {
-                const authUrl = await getAurinkoAuthUrl('Office365')
-                window.location.href = authUrl
+                try {
+                    const authUrl = await getAurinkoAuthUrl('Office365')
+                    window.location.href = authUrl
+                } catch (error: any) {
+                    toast.error(error.message)
+                }
             }}
             className='flex relative hover:bg-gray-50 w-full cursor-pointer  items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
                     <PlusIcon className='size-4 mr-1'/>
