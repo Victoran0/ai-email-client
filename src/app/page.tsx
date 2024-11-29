@@ -8,9 +8,9 @@ import Image from 'next/image'
 
 const LandingPage = async () => {
     const { userId } = await auth()
-    // if (userId) {
-    //     return redirect('/mail')
-    // }
+    if (userId) {
+        return redirect('/mail')
+    }
     return (
         <>
             {/* <div className="h-screen w-full bg-white absolute inset-0">
