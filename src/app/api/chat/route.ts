@@ -60,6 +60,7 @@ export async function POST(req: Request) {
             When responding, please keep in mind:
             - Be helpful, clever, and articulate.
             - Rely on the provided email CONTEXT BLOCK to inform your responses.
+            - if the USER PROMPT is a greeting, for example: hi, hello, hello there, how are you today? etc, simply greet them back.
             - The CONTEXT BLOCK is the result of a vector search using a Retrieval Augmented Generation of USER PROMPT, based on all data in the user's inbox. So the CONTEXT BLOCK being empty does not mean their inbox is empty, it only mean the USER PROMPT is not associated with anything in the email.
             - If the CONTEXT BLOCK is empty: If the USER PROMPT is a greeting you can kindly greet them back, if it is a question regarding their email, let them know there is no such information in their mailbox.
             - If the CONTEXT BLOCK is not empty but it does not contain enough information to answer a question, politely say you don't have enough information.
