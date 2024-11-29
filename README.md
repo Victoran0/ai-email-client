@@ -30,6 +30,7 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - Shadcn-UI: For the UI components
 - Neon DB: As the primary database to store data
 - Orama: For Rag and vector search
+- Aurinko: The Email Client API used
 - Stripe: For payment and subscription plan managements
 - GoogleGenerativeAI: As the LLM Model
 - Vercel AI sdk: To stream AI response
