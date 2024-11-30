@@ -1,20 +1,20 @@
 # AI Email Client
 
-Users can sync their emails, search for any email, reply and compose a new thread of email.  
+Effortlessly sync emails across multiple devices, ensuring seamless access to your inbox.  
 ![AI Email Copilot home Page ](./public/demo.png)
 
 ## All this features are also enhanced with AI:
 
-- users can give AI a prompt describing what they have in mind for the mail and AI will compose it for them.
+- Generate tailored email content by simply providing a brief prompt or context.
   ![Ai composer page for replies](./public/composeAutopilot.png)
   ![AI composer page for composing new email](./public/replyAutoPilot.png)
 
-- users can auto complete when writing a new email by simply pressing `ctrl + Q`.
+- Benefit from intelligent autocomplete suggestions triggered by the ctrl + Q shortcut, significantly accelerating the writing process.
 
-- users can chat with an AI to search through their emails and get the results of the related data.
+- Engage in natural language conversations with AI to extract valuable insights from your email data. Query your email history and receive personalized recommendations.  
   ![RAG search and AI reply page](./public/ragsearch.png)
 
-- users can subscribe to the premium plan to enable unlimited AI functionalities all day long. (basic plan gives only 15 AI helps daily)
+- Unlock the full potential of AI with the premium plan, adding up to 3 email accounts and offering unlimited access to AI-powered features throughout the day. (basic plan allow only 1 email account and 15 AI helps daily)
   ![Subscribed premium user UI](./public/subscriptionSuccessful.png)
 
 ## What tech stacks and libraries are used in this project?
