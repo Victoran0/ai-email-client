@@ -9,7 +9,7 @@ Effortlessly sync emails across multiple devices, ensuring seamless access to yo
   ![Ai composer page for replies](./public/composeAutopilot.png)
   ![AI composer page for composing new email](./public/replyAutoPilot.png)
 
-- Benefit from intelligent autocomplete suggestions triggered by the ctrl + Q shortcut, significantly accelerating the writing process.
+- Benefit from intelligent autocomplete suggestions triggered by the `ctrl + Q` shortcut, significantly accelerating the writing process.
 
 - Engage in natural language conversations with AI to extract valuable insights from your email data. Query your email history and receive personalized recommendations.  
   ![RAG search and AI reply page](./public/ragsearch.png)
