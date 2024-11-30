@@ -1,9 +1,14 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import EmailEditor from './email-editor'
+// import EmailEditor from './email-editor'
+const EmailEditor = dynamic(() => {
+    return import('./email-editor')
+}, {ssr: false})
 import { api, RouterOutputs } from '@/trpc/react'
 import useThreads from '@/hooks/use-threads'
 import { toast } from 'sonner'
+import dynamic from 'next/dynamic'
+
 
 const ReplyBox = () => {
     const {accountId, threadId} = useThreads()
@@ -22,6 +27,7 @@ const Component = ({replyDetails}: {replyDetails: RouterOutputs['account']['getR
     const [subject, setSubject] = useState(replyDetails.subject.startsWith("Re:") ? replyDetails.subject : `Re ${replyDetails.subject}`)
     const [toValues, setToValues] = useState<{label: string, value: string} []>(replyDetails.to.map(to => ({label: to.address, value: to.address})))
     const [ccValues, setCcValues] = useState<{label: string, value: string} []>(replyDetails.cc.map(cc => ({label: cc.address, value: cc.address})))
+    const [value, setValue] = React.useState<string>('')
 
     useEffect(() => {
         if (!threadId || !replyDetails) return
@@ -79,6 +85,9 @@ const Component = ({replyDetails}: {replyDetails: RouterOutputs['account']['getR
 
                 handleSend={handleSend}
                 isSending={sendEmail.isPending}
+
+                value={value}
+                setValue={setValue}
             />
         </div>
     )

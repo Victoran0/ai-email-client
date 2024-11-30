@@ -23,10 +23,12 @@ type Props = {
     handleSend: (value: string) => void
     isSending: boolean
     defaultToolbarExpanded?: boolean
+    value: string
+    setValue: (value: string) => void
 }
 
-const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setCcValues, to, handleSend, isSending, defaultToolbarExpanded}: Props) => {
-    const [value, setValue] = React.useState<string>('')
+const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setCcValues, to, handleSend, isSending, defaultToolbarExpanded, value, setValue}: Props) => {
+    
     const [expanded, setExpanded] = React.useState(defaultToolbarExpanded)
     const [token, setToken] = useState<string>('')
 

@@ -6,6 +6,7 @@ import { emailAddressSchema } from "@/lib/types";
 import { Account } from "@/lib/account";
 import { OramaClient } from "@/lib/orama";
 import { FREE_CREDITS_PER_DAY } from "@/constants";
+import { threadId } from "worker_threads";
 
 // to check if the user is authorised any not trying to access information from any other account
 export const authoriseAccountAccess = async (accountId: string, userId: string) => {
@@ -157,6 +158,33 @@ export const accountRouter = createTRPCRouter({
         }
     }),
 
+    saveDraft: privateProcedure.input(z.object({
+        accountId: z.string(),
+        body: z.string(),
+        subject: z.string(),
+        from: emailAddressSchema,
+        cc: z.array(emailAddressSchema).optional(),
+        bcc: z.array(emailAddressSchema).optional(),
+        to: z.array(emailAddressSchema).optional(),
+        replyTo: emailAddressSchema,
+        inReplyTo: z.string().optional(),
+        threadId: z.string().optional()
+    })).mutation(async ({ctx, input}) => {
+        const account = await authoriseAccountAccess(input.accountId, ctx.auth.userId)
+        const acc = new Account(account.accessToken)
+        await acc.saveDraft({
+            from: input.from,
+            subject: input.subject,
+            body: input.body,
+            cc: input.cc,
+            bcc: input.bcc,
+            to: input.to,
+            replyTo: input.replyTo,
+            inReplyTo: input.inReplyTo,
+            threadId: input.threadId
+        })
+    }),
+
     sendEmail: privateProcedure.input(z.object({
         accountId: z.string(),
         body: z.string(),
@@ -185,6 +213,7 @@ export const accountRouter = createTRPCRouter({
             replyTo: input.replyTo,
         })
     }),
+
     searchEmails: privateProcedure.input(z.object({
         accountId: z.string(),
         query: z.string()

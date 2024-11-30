@@ -4,6 +4,8 @@ import { threadId } from "worker_threads";
 import { db } from "@/server/db";
 import { syncEmailsToDatabase } from "./sync-to-db";
 
+const BASE_URL = "https://api.aurinko.io/v1/email"
+
 export class Account {
     private token: string;
 
@@ -12,7 +14,7 @@ export class Account {
     }
 
     private async startSync(daysWithin: number): Promise<SyncResponse> {
-        const response = await axios.post<SyncResponse>('https://api.aurinko.io/v1/email/sync', {}, {
+        const response = await axios.post<SyncResponse>(`${BASE_URL}/sync`, {}, {
             headers: {
                 Authorization: `Bearer ${this.token}`
             },
@@ -31,7 +33,7 @@ export class Account {
         if (deltaToken) params.deltaToken = deltaToken
         if (pageToken) params.pageToken = pageToken
 
-        const response = await axios.get<SyncUpdatedResponse>('https://api.aurinko.io/v1/email/sync/updated', {
+        const response = await axios.get<SyncUpdatedResponse>(`${BASE_URL}/sync/updated`, {
             headers: {
                 Authorization: `Bearer ${this.token}`
             },
@@ -139,6 +141,58 @@ export class Account {
         }
     }
 
+    async saveDraft({
+        from,
+        subject,
+        body,
+        inReplyTo,
+        threadId,
+        references,
+        to,
+        cc,
+        bcc,
+        replyTo
+    }: {
+        from: EmailAddress,
+        subject: string,
+        body: string,
+        inReplyTo?: string,
+        threadId?: string,
+        references?: string,
+        to?: EmailAddress[],
+        cc?: EmailAddress[],
+        bcc?: EmailAddress[],
+        replyTo?: EmailAddress
+    }) {
+        try {
+            const response = await axios.post(`${BASE_URL}/drafts`, {
+                from,
+                subject,
+                body,
+                inReplyTo,
+                threadId,
+                references,
+                to,
+                cc,
+                bcc,
+                replyTo: [replyTo]
+
+            }, {
+                params: {
+                    returnIds: true
+                },
+                headers: {Authorization: `Bearer ${this.token}`,},
+            })
+            console.log("draft saved: ", response.data)
+            return response.data
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log("Axios error whiel sending mail: ", JSON.stringify(error.response?.data, null, 2))
+            } else console.log('error sending mail: ', error)
+            throw error;
+        }
+    }
+
     async sendEmail({
         from,
         subject,
@@ -163,7 +217,7 @@ export class Account {
         replyTo?: EmailAddress
     }) {
         try {
-            const response = await axios.post('https://api.aurinko.io/v1/email/messages', {
+            const response = await axios.post(`${BASE_URL}/messages`, {
                 from,
                 subject,
                 body,
