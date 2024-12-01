@@ -1,6 +1,7 @@
 # AI Email Client
 
 Effortlessly sync emails across multiple devices, ensuring seamless access to your inbox.  
+<br>
 ![AI Email Copilot home Page ](./public/demo.png)
 
 ## Fully enhanced with AI:
