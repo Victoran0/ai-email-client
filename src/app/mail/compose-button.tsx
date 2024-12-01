@@ -25,6 +25,7 @@ import { turndown } from '@/lib/turndown'
 import { useLocalStorage } from 'usehooks-ts'
 import { atom, useAtom } from 'jotai';
 import { showComposeAtom } from './thread-list'
+import { ToastTitle } from '@radix-ui/react-toast'
 
 export const editorValueAtom = atom("");
 
@@ -43,29 +44,56 @@ const ComposeButton = () => {
     const saveDraft = api.account.saveDraft.useMutation()
     const {account} = useThreads()
 
+    const enableSend = () => {
+        if (toValues.length > 0 && subject.trim() !== "" && value.trim() !== "") {
+            if (sendEmail.isPending) {
+                toast.error("Kindly wait while the previous email gets sent")
+            }
+            return sendEmail.isPending as boolean
+        } else {
+            if (toValues.length < 1) {
+                toast.error("Recipient info can not be empty")
+            } else if (subject.trim() === "") {
+                toast.error("Email must have a subject")
+            } else if (value.trim() === "") {
+                toast.error("Email body must have a content")
+            }
+            return false as boolean
+        }
+    }
+
     const handleSend = async (value: string) => {
         if (!account) return
-        sendEmail.mutate({
-            accountId: account.id,
-            threadId: undefined,
-            body: value,
-            from: {name: account?.name ?? 'Me', address: account.emailAddress ?? 'me@example.com'},
-            to: toValues.map(to => ({name: to.value, address: to.value})),
-            cc: ccValues.map(cc => ({name: cc.value, address: cc.value})),
-            replyTo: {name: account?.name ?? 'Me', address: account.emailAddress ?? 'me@example.com'},
-            subject: subject,
-            inReplyTo: undefined
-        }, {
-            onSuccess: () => {
-                toast.success("Email sent")
-            },
-            onError: error => {
-                console.log(error)
-                toast.error("Error sending Email")
-            }
-        })
-        setShowCompose(prevState => ({...prevState, defaultBody: "", defaultSubject: ""}))
-        // console.log("value", value)
+        if (enableSend()) {
+
+            sendEmail.mutate({
+                accountId: account.id,
+                threadId: undefined,
+                body: value,
+                from: {name: account?.name ?? 'Me', address: account.emailAddress ?? 'me@example.com'},
+                to: toValues.map(to => ({name: to.value, address: to.value})),
+                cc: ccValues.map(cc => ({name: cc.value, address: cc.value})),
+                replyTo: {name: account?.name ?? 'Me', address: account.emailAddress ?? 'me@example.com'},
+                subject: subject,
+                inReplyTo: undefined
+            }, {
+                onSuccess: () => {
+                    toast.success("Email sent")
+                },
+                onError: error => {
+                    console.log(error)
+                    toast.error("Error sending Email")
+                }
+            })
+            setShowCompose(prevState => ({...prevState, defaultBody: "", defaultSubject: ""}))
+            setSubject("")
+            setEditorValue("")
+            setToValues([])
+            setCcValues([])
+            // console.log("value", value)
+        } else {
+            return
+        }
     }
 
     const handleDrawerOpen = (isOpen: boolean): void => {
