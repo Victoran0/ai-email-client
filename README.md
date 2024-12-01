@@ -6,9 +6,9 @@ Effortlessly sync emails across multiple devices, ensuring seamless access to yo
 
 ## Fully enhanced with AI:
 
-- Generate tailored email content by simply providing a brief prompt or context.
+- Generate tailored email content by simply providing a brief prompt or context.  
   <br>
-  ![Ai composer page for replies](./public/composeAutopilot.png)
+  ![Ai composer page for replies](./public/composeAutopilot.png)  
   <br>
   ![AI composer page for composing new email](./public/replyAutoPilot.png)
 
@@ -18,7 +18,7 @@ Effortlessly sync emails across multiple devices, ensuring seamless access to yo
   <br>
   ![RAG search and AI reply page](./public/ragsearch.png)
 
-- Unlock the full potential of AI with the premium plan, adding up to 3 email accounts and offering unlimited access to AI-powered features throughout the day. (basic plan allow only 1 email account and 15 AI helps daily)
+- Unlock the full potential of AI with the premium plan, adding up to 3 email accounts and offering unlimited access to AI-powered features throughout the day. (basic plan allow only 1 email account and 15 AI helps daily)  
   <br>
   ![Subscribed premium user UI](./public/subscriptionSuccessful.png)
 
