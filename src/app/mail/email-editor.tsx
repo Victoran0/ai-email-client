@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import AIComposeButton from './ai-compose';
 import { generate } from './action';
 import { readStreamableValue } from 'ai/rsc';
+import { useAtom } from 'jotai';
+import { editorValueAtom } from './compose-button';
 
 type Props = {
     subject: string
@@ -27,10 +29,12 @@ type Props = {
     setValue: (value: string) => void
 }
 
+
 const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setCcValues, to, handleSend, isSending, defaultToolbarExpanded, value, setValue}: Props) => {
     
     const [expanded, setExpanded] = React.useState(defaultToolbarExpanded)
     const [token, setToken] = useState<string>('')
+    const [editorValue] = useAtom(editorValueAtom)
 
     const aiGenerate = async (value: string) => {
         const {output} = await generate(value)
@@ -64,8 +68,9 @@ const EmailEditor = ({subject, setSubject, toValues, setToValues, ccValues, setC
     })
 
     useEffect(() => {
-        editor?.commands?.insertContent(token)
-    }, [editor, token])
+        editor?.commands?.insertContent(token === "" ? editorValue : token)  //token should be there
+        console.log("Editor value atom: ", editorValue)
+    }, [editor, token, editorValue])
 
     const onGenerate = (token: string) => {
         editor?.commands?.insertContent(token)

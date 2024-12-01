@@ -11,6 +11,7 @@ import ThreadList from './thread-list'
 import ThreadDisplay from './thread-display'
 import SearchBar from './search-bar'
 import AskAI from './ask-ai'
+import { useLocalStorage } from 'usehooks-ts'
 
 type Props = {
     defaultLayout: number[] | undefined
@@ -21,6 +22,7 @@ type Props = {
 const Mail = ({defaultLayout=[20,32,48], navCollapsedSize, defaultCollapsed}: Props) => {
 
     const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
+    const [section, setSection] = useLocalStorage("tab", "inbox")
 
     return (
         <TooltipProvider delayDuration={0}>
@@ -59,7 +61,9 @@ const Mail = ({defaultLayout=[20,32,48], navCollapsedSize, defaultCollapsed}: Pr
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
                     <Tabs defaultValue='inbox'>
                         <div className="flex items-center px-4 py-2">
-                            <h1 className='text-xl font-bold'>inbox</h1>
+                            <h1 className='text-xl font-bold'>
+                                {section.charAt(0).toUpperCase() + section.slice(1)}
+                            </h1>
                             <TabsList className='ml-auto'>
                                 <TabsTrigger value='inbox' className='text-zinc-600 dark:text-zinc-200'>
                                     Inbox

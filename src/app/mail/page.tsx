@@ -2,7 +2,7 @@
 // import ThemeToggle from '@/components/theme-toogle'
 import { UserButton } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
-import React from 'react'
+import React, { useState } from 'react'
 
 // Dynamic imports
 const ThemeToggle = dynamic(() => {

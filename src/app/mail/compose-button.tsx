@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Drawer,
   DrawerClose,
@@ -22,11 +22,19 @@ import { toast } from 'sonner'
 import dynamic from 'next/dynamic'
 import DraftOption from './draft-option'
 import { turndown } from '@/lib/turndown'
+import { useLocalStorage } from 'usehooks-ts'
+import { atom, useAtom } from 'jotai';
+import { showComposeAtom } from './thread-list'
 
+export const editorValueAtom = atom("");
 
 const ComposeButton = () => {
     const [toValues, setToValues] = useState<{label: string, value: string} []>([])
     const [ccValues, setCcValues] = useState<{label: string, value: string} []>([])
+
+    const [showCompose, setShowCompose] = useAtom(showComposeAtom)
+    const [editorValue, setEditorValue] = useAtom(editorValueAtom)
+
     const [subject, setSubject] = useState<string>('')
     const [value, setValue] = React.useState<string>('')
     const [showDraftOption, setShowDraftOption] = useState<boolean>(false)
@@ -56,27 +64,42 @@ const ComposeButton = () => {
                 toast.error("Error sending Email")
             }
         })
+        setShowCompose(prevState => ({...prevState, defaultBody: "", defaultSubject: ""}))
         // console.log("value", value)
     }
 
     const handleDrawerOpen = (isOpen: boolean): void => {
-        console.log("is the drawer open: ", isOpen)
+        setShowCompose((prevState) => ({...prevState, open: isOpen}))
+        
+        console.log("The default values in compose button: ", showCompose)
         if (!isOpen) {
             if (turndown.turndown(value) !== "" || subject !== "") {
                 setShowDraftOption(!isOpen)
             }
-            // console.log('---- the body----', )
-            // console.log('---- the subject----', )
+            setShowCompose({open: false, defaultBody: "", defaultSubject: ""})
+            setSubject("")
+            setEditorValue("")
         }
-        // if the input fields are empty, terminate the compose section. If it is not empty, then show the draftoptions
+    }
+
+    useEffect(() => {
+        if (showCompose.open) {
+            if (showCompose.defaultBody !== "" || showCompose.defaultSubject !== "") {
+                setSubject(showCompose.defaultSubject)
+                setEditorValue(showCompose.defaultBody)
+                console.log("editor value atom value changed: ", editorValue); 
+                console.log("the showcompose.default body value: ", showCompose.defaultBody)
+            }
+        }
+    }, [showCompose])
+
+    const handleDeleteDraft = () => {
+        setValue('')
+        setSubject('')
+        setShowCompose({open: false, defaultBody: "", defaultSubject: ""});
     }
 
     const handleSaveDraft = () => {
-        setValue('')
-        setSubject('')
-    }
-
-    const handleDeleteDraft = () => {
         if (!account) return
         saveDraft.mutate({
             accountId: account.id,
@@ -97,12 +120,13 @@ const ComposeButton = () => {
                 toast.error("Error saving draft")
             }
         })
+        setShowCompose({open: false, defaultBody: "", defaultSubject: ""})
     }
 
 
   return (
     <>
-        <Drawer onOpenChange={handleDrawerOpen}>
+        <Drawer open={showCompose.open} onOpenChange={handleDrawerOpen}>
             <DrawerTrigger>
                 <Button>
                     <Pencil className='size-4 mr-1' />

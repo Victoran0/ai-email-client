@@ -1,13 +1,19 @@
 'use client'
 import { Badge } from '@/components/ui/badge'
 import useThreads from '@/hooks/use-threads'
+import { turndown } from '@/lib/turndown'
 import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import DOMPurify from 'dompurify'
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, useState } from 'react'
+import { atom, useAtom } from 'jotai'
+
+export const showComposeAtom = atom({open: false, defaultBody: '', defaultSubject: ''});
 
 const ThreadList = () => {
-    const {threads, threadId, setThreadId} = useThreads()
+    const {threads, threadId, setThreadId} = useThreads();
+    const [showCompose, setShowCompose] = useAtom(showComposeAtom);
+
     const groupedThreads = threads?.reduce((acc, thread) => {
         const date = format(thread.emails[0]?.sentAt ?? new Date(), 'yyyy-MM-dd')
         if (!acc[date]) {
@@ -18,6 +24,7 @@ const ThreadList = () => {
     }, {} as Record<string, typeof threads>)
 
     return (
+        <>
         <div className="max-w-full overflow-y-scroll max-h-[calc(100vh-120px)]">
             <div className="flex flex-col gap-2 p-4 pt-0" >
                 {Object.entries(groupedThreads ?? {}).map(([date, threads]) => {
@@ -35,7 +42,14 @@ const ThreadList = () => {
                             // visualMode && selectedThreadIds.includes(item.id) && "bg-blue-200 dark:bg-blue-900"
                             )}
                             onClick={() => {
-                            setThreadId(item.id);
+                                if (!item.draftStatus) {
+                                    setThreadId(item.id);
+                                } else {
+                                    setShowCompose({open: true, defaultBody: item.emails[0]?.body ?? "", defaultSubject: item.subject})
+                                }
+                            // console.log("the new show compose Value: ", showCompose)
+                            // console.log("--------the clicked item subject--------: ", item.subject)
+                            // console.log("--------the clicked item body--------: ", turndown.turndown(item.emails[0]?.body ?? ""))
                             }}
                         >
                             {/* {threadId === item.id && (
@@ -95,6 +109,7 @@ const ThreadList = () => {
                 })}
             </div>
         </div>
+        </>
     )
 }
 

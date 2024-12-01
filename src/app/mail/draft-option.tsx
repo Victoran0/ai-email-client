@@ -32,7 +32,7 @@ const DraftOption = ({open, setOpen, handleSaveDraft, handleDeleteDraft}: Props)
                     className='hover:bg-gray-200 hover:text-black'
                     onClick={() => {
                         setOpen(false);
-                        handleDeleteDraft()
+                        handleSaveDraft()
                     }}  
                 >
                     Save draft
@@ -41,7 +41,7 @@ const DraftOption = ({open, setOpen, handleSaveDraft, handleDeleteDraft}: Props)
                     className='bg-gray-200 text-black hover:text-white'
                     onClick={() => {
                         setOpen(false);
-                        handleSaveDraft();
+                        handleDeleteDraft();
                     }}  
                 >
                     Discard

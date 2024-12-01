@@ -1,3 +1,4 @@
+"use client"
 import { api } from '@/trpc/react'
 import React from 'react'
 import { useLocalStorage } from 'usehooks-ts'
