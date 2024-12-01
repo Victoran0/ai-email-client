@@ -6,9 +6,11 @@ import StripeButton from './stripe-button'
 import { getSubscriptionStatus } from '@/lib/stripe-action'
 import useThreads from '@/hooks/use-threads'
 import { api } from '@/trpc/react'
+import { Loader2 } from 'lucide-react'
 
 const PremiumBanner = () => {
     const [isSubscribed, setIsSubscribed] = useState(false)
+    const [loaded, setLoaded] = useState(false)
     const {accountId} = useThreads()
     const {data} = api.account.getChatbotInteraction.useQuery({accountId})
 
@@ -16,9 +18,11 @@ const PremiumBanner = () => {
       ( async() => {
         const subscriptionStatus = await getSubscriptionStatus()
         setIsSubscribed(subscriptionStatus)
+        setLoaded(true)
       })()
     }, [])
 
+    if (loaded) {
     if (!isSubscribed) return <div className='bg-gray-900 relative p-4 rounded-lg border overflow-hidden flex flex-col md:flex-row gap-4'>
         <img src='/bot.webp' className='md:absolute md:-bottom-6 md:-right-10 h-[180px] w-auto' alt='chatbot' />
         <div>
@@ -50,11 +54,7 @@ const PremiumBanner = () => {
             <StripeButton />
         </div>
     </div>
-  return (
-    <div>
-      Premiun 
-    </div>
-  )
+  } else return <Loader2 className='animate-spin text-gray-400 size-full md:size-auto' /> 
 }
 
 export default PremiumBanner
