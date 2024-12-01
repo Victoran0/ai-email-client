@@ -3,7 +3,7 @@
 Effortlessly sync emails across multiple devices, ensuring seamless access to your inbox.  
 ![AI Email Copilot home Page ](./public/demo.png)
 
-## All this features are also enhanced with AI:
+## Fully enhanced with AI:
 
 - Generate tailored email content by simply providing a brief prompt or context.
   ![Ai composer page for replies](./public/composeAutopilot.png)
