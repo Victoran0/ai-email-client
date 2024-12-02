@@ -1,11 +1,10 @@
 'use client'
 import { Badge } from '@/components/ui/badge'
 import useThreads from '@/hooks/use-threads'
-import { turndown } from '@/lib/turndown'
 import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import DOMPurify from 'dompurify'
-import React, { ComponentProps, useState } from 'react'
+import React, { ComponentProps } from 'react'
 import { atom, useAtom } from 'jotai'
 
 export const showComposeAtom = atom({open: false, defaultBody: '', defaultSubject: ''});

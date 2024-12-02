@@ -224,7 +224,7 @@ export const accountRouter = createTRPCRouter({
         await orama.initialize()
         const {query} = input
         const results = await orama.search({term: query})
-        console.log("the orama search results: ", results)
+        console.log("the orama search results: ", results.hits[0]?.document)
         return results
     }),
     getChatbotInteraction: privateProcedure.input(z.object({accountId: z.string()})

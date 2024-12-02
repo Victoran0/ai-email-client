@@ -6,12 +6,14 @@ import { api } from '@/trpc/react'
 import { useDebounceValue } from 'usehooks-ts'
 import useThreads from '@/hooks/use-threads'
 import DOMPurify from 'dompurify'
+import { isSearchingAtom } from './search-bar'
 
 const SearchDisplay = () => {
     const [searchValue] = useAtom(searchValueAtom)
     const search = api.account.searchEmails.useMutation()
     const [debouncedSearchValue] = useDebounceValue(searchValue, 500)
-    const {accountId} = useThreads()
+    const {accountId, setThreadId} = useThreads()
+    const [, setIsSearching] = useAtom(isSearchingAtom);
 
     React.useEffect(() => {
         if (!accountId) return
@@ -35,7 +37,15 @@ const SearchDisplay = () => {
         : (<>
             <ul className="flex flex-col gap-2">
             {search.data?.hits.map(hit => (
-                <li key={hit.id} className='border list-none rounded-md p-4 hover:bg-gray-100 cursor-pointer transition-all dark:hover:bg-gray-900'>
+                <li 
+                    key={hit.id} 
+                    onClick={(() => {
+                        setIsSearching(false);
+                        setThreadId(hit.document?.threadId); 
+                        console.log("hit item clicked: ", hit.document?.threadId)
+                    })}
+                    className='border list-none rounded-md p-4 hover:bg-gray-100 cursor-pointer transition-all dark:hover:bg-gray-900'
+                    >
                     <h3 className='text-base font-medium'>
                         {hit.document.subject}
                     </h3>
