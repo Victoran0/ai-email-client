@@ -42,7 +42,6 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - react-avatar: For user avatars
 - react-select: For selecting cc and Bccs
 - Clerk: For user authentication
-- Sonner: For toasting error and other messages
 - Next-Themes: To toggle light and dark mode
 - K bar: For enabling keyboard shortcuts
 - Tiptap: Enabling an headless WYSIWYG editor in the reply and compose email body
