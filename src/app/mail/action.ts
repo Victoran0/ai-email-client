@@ -65,7 +65,7 @@ export async function generate(input: string) {
             Example:
             <input>Hello there</input>
 
-            Your response: , just decided to check on you again, how has your day been so far.
+            Your response: , just decided to check on you again, how has your day been?.
 
             keep the tone of the text consistent with the rest of the text.
             keep the response short and sweet. Act like a copilot, finish my sentence if need be, but don't try to generate a whole new paragraph.
