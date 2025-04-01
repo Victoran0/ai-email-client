@@ -20,7 +20,7 @@ const AskAI = ({isCollapsed}: {isCollapsed: boolean}) => {
         },
         onError: error => {
             toast.error(error.message)
-            console.log("useChat error: ", error)
+            console.error("useChat error: ", error)
         },
         onFinish: () => {
             utils.account.getChatbotInteraction.refetch()
